@@ -4,12 +4,12 @@ from sqlalchemy import create_engine, text
 # Create connection (update password)
 engine = create_engine('postgresql://postgres:localdev2025@localhost:5432/fraud_detection_db')
 
-print("🔍 Exploring the insurance fraud data...\n")
+print("Exploring the insurance fraud data...\n")
 
 with engine.connect() as conn:
     # Basic statistics
     result = conn.execute(text("SELECT COUNT(*) FROM insurance_claims"))
-    print(f"📊 Total records: {result.fetchone()[0]:,}")
+    print(f"Total records: {result.fetchone()[0]:,}")
     
     # Fraud distribution - Note the quotes around column names!
     result = conn.execute(text("""
@@ -19,7 +19,7 @@ with engine.connect() as conn:
         GROUP BY "FraudFound_P"
         ORDER BY "FraudFound_P"
     """))
-    print("\n🚨 Fraud Distribution:")
+    print("\nFraud Distribution:")
     for row in result:
         print(f"  {row[0]}: {row[1]:,} cases ({row[2]}%)")
     
@@ -61,7 +61,7 @@ with engine.connect() as conn:
         GROUP BY "AccidentArea", "FraudFound_P"
         ORDER BY "AccidentArea", "FraudFound_P"
     """))
-    print("\n📍 Fraud by Accident Area:")
+    print("\nFraud by Accident Area:")
     current_area = None
     for row in result:
         if current_area != row[0]:
@@ -69,4 +69,4 @@ with engine.connect() as conn:
             print(f"\n  {current_area}:")
         print(f"    Fraud {row[1]}: {row[2]:,} cases")
 
-print("\n✅ Data exploration complete! Ready to start feature engineering.")
+print("\nData exploration complete! Ready to start feature engineering.")
