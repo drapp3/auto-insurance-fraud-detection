@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, text
 # Read the CSV file
 print("📖 Reading CSV file...")
 df = pd.read_csv('data/raw/fraud_oracle.csv')  # Changed to correct filename!
-print(f"✅ Loaded {len(df)} rows and {len(df.columns)} columns")
+print(f"Loaded {len(df)} rows and {len(df.columns)} columns")
 
 # Show first few rows
 print("\n📊 First 5 rows:")
@@ -21,13 +21,13 @@ engine = create_engine('postgresql://postgres:localdev2025@localhost:5432/fraud_
 print("\n📤 Loading data to PostgreSQL...")
 try:
     df.to_sql('insurance_claims', engine, if_exists='replace', index=False)
-    print("✅ Data successfully loaded to PostgreSQL!")
+    print("Data successfully loaded to PostgreSQL!")
     
     # Verify the load
     with engine.connect() as conn:
         result = conn.execute(text("SELECT COUNT(*) FROM insurance_claims"))
         count = result.fetchone()[0]
-        print(f"✅ Verified: {count} rows in database")
+        print(f"Verified: {count} rows in database")
         
         # Check fraud rate
         result = conn.execute(text("""
@@ -35,7 +35,7 @@ try:
             FROM insurance_claims 
             GROUP BY fraud_reported
         """))
-        print("\n📊 Fraud distribution:")
+        print("\nFraud distribution:")
         for row in result:
             print(f"  {row[0]}: {row[1]} cases")
             
