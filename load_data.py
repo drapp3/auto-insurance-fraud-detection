@@ -2,7 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 
 # Read the CSV file
-print("📖 Reading CSV file...")
+print("Reading CSV file...")
 df = pd.read_csv('data/raw/fraud_oracle.csv')  # Changed to correct filename!
 print(f"Loaded {len(df)} rows and {len(df.columns)} columns")
 
