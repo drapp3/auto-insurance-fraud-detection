@@ -85,4 +85,4 @@ python notebooks/04_create_visualizations.py
 ## Contact
 
 - LinkedIn: davisrapp
-- Email: davisrapp@yahoo.com
+- Email: drappanalysis@gmail.com
