@@ -12,12 +12,12 @@ Machine learning system that identifies fraudulent auto insurance claims with 61
 ## Project Structure
 ```
 auto-insurance-fraud-detection/
-├── data/                      # Data files
-├── models/                    # Trained models
-├── notebooks/                 # Analysis scripts
-├── sql/                       # SQL feature engineering
-├── visualizations/           # Generated charts
-└── README.md                 # This file
+├── data/
+├── models/
+├── notebooks/
+├── sql/
+├── visualizations/
+└── README.md
 ```
 ## Methodology
 1. Data Analysis
