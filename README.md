@@ -1,86 +1,70 @@
-# Auto Insurance Fraud Detection System
+# Auto Insurance Fraud Detection
 
-## Overview
-Machine learning system that identifies fraudulent auto insurance claims with 61% detection rate, potentially saving $98,700 annually for insurers while minimizing false positives.
+Machine learning workflow using auto insurance claims data to explore fraud detection, class imbalance, threshold tuning, and business tradeoffs.
 
-## Business Impact
-- $98,700 estimated annual savings
-- 61% fraud detection rate (113 out of 185 fraudulent claims caught)
-- 10% precision (acceptable trade-off for high recall in fraud detection)
-- 1,176 claims flagged for review out of 3,084 total
+The model is tuned for recall because missed fraud is more costly than sending extra claims to manual review. The tradeoff is low precision, which is common in fraud-screening workflows where the model is used as a triage tool rather than an automatic decision-maker.
+
+## Results
+
+- Dataset: 15,420 insurance claims with a 5.99% fraud rate
+- Model: Random Forest with SMOTE for class imbalance
+- ROC-AUC: 0.673
+- Recall: 61% of fraudulent claims caught in the test set
+- Precision: 10%, meaning many flagged claims would still need human review
+- Scenario estimate: about $98K in potential annual savings under the project assumptions
+
+The savings estimate is a simple scenario calculation based on assumed fraud losses and review costs. It is not a production financial model.
+
+## Workflow
+
+1. Load and inspect claims data
+2. Use SQL and Python to explore fraud patterns
+3. Engineer claim, timing, location, and demographic risk indicators
+4. Train baseline Logistic Regression and Random Forest models
+5. Apply SMOTE to address class imbalance
+6. Tune the classification threshold around recall and review volume
+7. Export charts and model outputs for review
+
+## Key Findings
+
+- Age was the strongest feature in the trained Random Forest model
+- Vehicle age and weekend accident timing showed useful signal
+- Claims without a police report or witnesses were higher risk
+- The optimized threshold caught more fraud but increased false positives
 
 ## Project Structure
-```
+
+```text
 auto-insurance-fraud-detection/
 ├── data/
 ├── models/
 ├── notebooks/
 ├── sql/
 ├── visualizations/
+├── explore_data.py
+├── load_data.py
+├── requirements.txt
 └── README.md
 ```
-## Methodology
-1. Data Analysis
 
-- Analyzed 15,420 insurance claims with 5.99% fraud rate
-- Identified key fraud indicators through SQL queries and Python analysis
-- Found urban areas have higher fraud rates (790 vs 133 rural cases)
+## How to Run
 
-2. Feature Engineering
-
-- Created risk indicators using PostgreSQL window functions
-- Engineered time-based features (weekend claims, claim delays)
-- Built demographic risk profiles
-
-3. Model Development
-
-- Tested Logistic Regression and Random Forest algorithms
-- Used SMOTE to handle class imbalance
-- Optimized threshold for business impact vs accuracy
-
-4. Results
-
-- Random Forest model achieved 0.673 ROC-AUC
-- Optimized for high recall to catch more fraud
-- Trade-off: More false positives but fewer missed frauds
-
-## Key Insights
-
-- Age is the strongest predictor (49.3% feature importance)
-- Vehicle age correlates with fraud risk
-- Weekend accidents show higher fraud probability
-- Claims with no police report or witnesses are high risk
-
-## Technical Skills Demonstrated
-
-- SQL: Complex queries, CTEs, window functions
-- Python: pandas, scikit-learn, feature engineering
-- Machine Learning: Classification, imbalanced data handling, threshold optimization
-- Business Analysis: ROI calculation, metric interpretation
-
-## Installation & Usage
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/auto-insurance-fraud-detection.git
-
-# Install dependencies
+git clone https://github.com/drapp3/auto-insurance-fraud-detection.git
+cd auto-insurance-fraud-detection
 pip install -r requirements.txt
 
-# Set up PostgreSQL database
 createdb fraud_detection_db
 
-# Run analysis pipeline
 python load_data.py
 python notebooks/01_data_preparation.py
 python notebooks/03_fraud_model_improved.py
 python notebooks/04_create_visualizations.py
 ```
-## Future Improvements
 
-- Implement real-time scoring API
-- Add more external data sources (weather, economic indicators)
-- Test deep learning approaches
-- Develop explainable AI dashboard
+## Notes
+
+This project is focused on the modeling workflow and tradeoff analysis. It is not intended for production fraud decisions without stronger validation, monitoring, and business-specific cost assumptions.
 
 ## Contact
 
