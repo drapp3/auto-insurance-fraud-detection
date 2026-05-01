@@ -55,6 +55,7 @@ cd auto-insurance-fraud-detection
 pip install -r requirements.txt
 
 createdb fraud_detection_db
+export FRAUD_DB_URL=postgresql://user:password@localhost:5432/fraud_detection_db
 
 python load_data.py
 python notebooks/01_data_preparation.py

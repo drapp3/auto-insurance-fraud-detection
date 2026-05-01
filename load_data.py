@@ -1,43 +1,44 @@
+import os
+
 import pandas as pd
 from sqlalchemy import create_engine, text
 
-# Read the CSV file
+
+DB_URL = os.getenv("FRAUD_DB_URL")
+if not DB_URL:
+    raise RuntimeError("Set FRAUD_DB_URL before running this script.")
+
+
 print("Reading CSV file...")
-df = pd.read_csv('data/raw/fraud_oracle.csv')  # Changed to correct filename!
+df = pd.read_csv("data/raw/fraud_oracle.csv")
 print(f"Loaded {len(df)} rows and {len(df.columns)} columns")
 
-# Show first few rows
-print("\n📊 First 5 rows:")
+print("\nFirst 5 rows:")
 print(df.head())
 
-# Show column names
-print("\n📋 Columns in dataset:")
+print("\nColumns in dataset:")
 print(df.columns.tolist())
 
-# Create connection (replace with your password)
-engine = create_engine('postgresql://postgres:localdev2025@localhost:5432/fraud_detection_db')
+engine = create_engine(DB_URL)
 
-# Load to PostgreSQL
-print("\n📤 Loading data to PostgreSQL...")
+print("\nLoading data to PostgreSQL...")
 try:
-    df.to_sql('insurance_claims', engine, if_exists='replace', index=False)
+    df.to_sql("insurance_claims", engine, if_exists="replace", index=False)
     print("Data successfully loaded to PostgreSQL!")
-    
-    # Verify the load
+
     with engine.connect() as conn:
         result = conn.execute(text("SELECT COUNT(*) FROM insurance_claims"))
         count = result.fetchone()[0]
         print(f"Verified: {count} rows in database")
-        
-        # Check fraud rate
+
         result = conn.execute(text("""
-            SELECT fraud_reported, COUNT(*) as count 
-            FROM insurance_claims 
-            GROUP BY fraud_reported
+            SELECT "FraudFound_P", COUNT(*) as count
+            FROM insurance_claims
+            GROUP BY "FraudFound_P"
         """))
         print("\nFraud distribution:")
         for row in result:
             print(f"  {row[0]}: {row[1]} cases")
-            
+
 except Exception as e:
-    print(f"❌ Error: {e}")
+    print(f"Error: {e}")

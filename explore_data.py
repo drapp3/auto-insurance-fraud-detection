@@ -1,17 +1,19 @@
-import pandas as pd
+import os
+
 from sqlalchemy import create_engine, text
 
-# Create connection (update password)
-engine = create_engine('postgresql://postgres:localdev2025@localhost:5432/fraud_detection_db')
+
+DB_URL = os.getenv("FRAUD_DB_URL")
+if not DB_URL:
+    raise RuntimeError("Set FRAUD_DB_URL before running this script.")
+engine = create_engine(DB_URL)
 
 print("Exploring the insurance fraud data...\n")
 
 with engine.connect() as conn:
-    # Basic statistics
     result = conn.execute(text("SELECT COUNT(*) FROM insurance_claims"))
     print(f"Total records: {result.fetchone()[0]:,}")
-    
-    # Fraud distribution - Note the quotes around column names!
+
     result = conn.execute(text("""
         SELECT "FraudFound_P", COUNT(*) as count,
                ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) as percentage
@@ -22,8 +24,7 @@ with engine.connect() as conn:
     print("\nFraud Distribution:")
     for row in result:
         print(f"  {row[0]}: {row[1]:,} cases ({row[2]}%)")
-    
-    # Top 5 car makes
+
     result = conn.execute(text("""
         SELECT "Make", COUNT(*) as count
         FROM insurance_claims
@@ -31,14 +32,13 @@ with engine.connect() as conn:
         ORDER BY count DESC
         LIMIT 5
     """))
-    print("\n🚗 Top 5 Car Makes:")
+    print("\nTop 5 Car Makes:")
     for row in result:
         print(f"  {row[0]}: {row[1]:,} claims")
-    
-    # Age distribution
+
     result = conn.execute(text("""
-        SELECT 
-            CASE 
+        SELECT
+            CASE
                 WHEN "Age" < 25 THEN 'Under 25'
                 WHEN "Age" BETWEEN 25 AND 35 THEN '25-35'
                 WHEN "Age" BETWEEN 36 AND 50 THEN '36-50'
@@ -50,11 +50,10 @@ with engine.connect() as conn:
         GROUP BY age_group
         ORDER BY age_group
     """))
-    print("\n👥 Age Distribution:")
+    print("\nAge Distribution:")
     for row in result:
         print(f"  {row[0]}: {row[1]:,} claims")
-    
-    # Fraud by accident area
+
     result = conn.execute(text("""
         SELECT "AccidentArea", "FraudFound_P", COUNT(*) as count
         FROM insurance_claims
@@ -69,4 +68,4 @@ with engine.connect() as conn:
             print(f"\n  {current_area}:")
         print(f"    Fraud {row[1]}: {row[2]:,} cases")
 
-print("\nData exploration complete! Ready to start feature engineering.")
+print("\nData exploration complete. Ready to start feature engineering.")

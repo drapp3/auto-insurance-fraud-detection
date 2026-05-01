@@ -1,8 +1,11 @@
 import pandas as pd
+import os
 from sqlalchemy import create_engine, text
 
-# Connection
-engine = create_engine('postgresql://postgres:localdev2025@localhost:5432/fraud_detection_db')
+DB_URL = os.getenv("FRAUD_DB_URL")
+if not DB_URL:
+    raise RuntimeError("Set FRAUD_DB_URL before running this script.")
+engine = create_engine(DB_URL)
 
 # Read the data
 print("Loading data...")
